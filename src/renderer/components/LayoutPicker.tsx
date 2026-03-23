@@ -18,10 +18,10 @@ const PRESETS: LayoutPreset[] = [
 export default function LayoutPicker({ selected, onChange }: LayoutPickerProps) {
   return (
     <div>
-      <label className="text-xs text-text-secondary uppercase tracking-wider font-medium mb-2 block">
+      <label className="text-[11px] text-text-secondary uppercase tracking-[0.08em] font-semibold mb-3 block">
         Layout
       </label>
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-5 gap-2.5">
         {PRESETS.map(preset => {
           const layout = LAYOUT_PRESETS[preset];
           const isSelected = selected === preset;
@@ -30,29 +30,40 @@ export default function LayoutPicker({ selected, onChange }: LayoutPickerProps) 
             <button
               key={preset}
               onClick={() => onChange(layout)}
-              className={`p-2 rounded-lg border transition-all ${
+              className={`p-2.5 rounded-xl border group relative overflow-hidden ${
                 isSelected
-                  ? 'border-accent bg-accent/10 shadow-glow'
-                  : 'border-border hover:border-border-active bg-surface-2'
+                  ? 'border-accent/40 bg-accent/[0.08] shadow-glow'
+                  : 'border-border hover:border-border-active bg-white/[0.02] hover:bg-white/[0.04]'
               }`}
+              style={{ transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)' }}
               title={PRESET_LABELS[preset]}
             >
-              <div className="relative w-full aspect-video rounded overflow-hidden bg-surface-0">
+              {/* Selection indicator */}
+              {isSelected && (
+                <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent animate-scale-in" />
+              )}
+
+              <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-black/20">
                 {layout.slots.map(slot => (
                   <div
                     key={slot.id}
-                    className={`absolute rounded-sm ${isSelected ? 'bg-accent/40' : 'bg-surface-3'}`}
+                    className={`absolute rounded-[3px] ${
+                      isSelected
+                        ? 'bg-accent/30 border border-accent/20'
+                        : 'bg-white/[0.06] border border-white/[0.04] group-hover:bg-white/[0.10]'
+                    }`}
                     style={{
-                      left: `${slot.x}%`,
-                      top: `${slot.y}%`,
-                      width: `calc(${slot.width}% - 2px)`,
-                      height: `calc(${slot.height}% - 2px)`,
-                      margin: '1px',
+                      left: `calc(${slot.x}% + 1.5px)`,
+                      top: `calc(${slot.y}% + 1.5px)`,
+                      width: `calc(${slot.width}% - 3px)`,
+                      height: `calc(${slot.height}% - 3px)`,
                     }}
                   />
                 ))}
               </div>
-              <div className="text-[10px] text-text-tertiary mt-1 text-center truncate">
+              <div className={`text-[10px] mt-1.5 text-center truncate ${
+                isSelected ? 'text-accent font-medium' : 'text-text-tertiary'
+              }`}>
                 {PRESET_LABELS[preset]}
               </div>
             </button>

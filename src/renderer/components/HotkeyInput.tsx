@@ -82,8 +82,8 @@ export default function HotkeyInput({ value, onChange }: HotkeyInputProps) {
 
   return (
     <div>
-      <label className="text-xs text-text-secondary uppercase tracking-wider font-medium mb-2 block">
-        Hotkey
+      <label className="text-[11px] text-text-secondary uppercase tracking-[0.08em] font-semibold mb-3 block">
+        Global Hotkey
       </label>
       <div className="flex items-center gap-2">
         <div
@@ -92,16 +92,16 @@ export default function HotkeyInput({ value, onChange }: HotkeyInputProps) {
           onFocus={() => setCapturing(true)}
           onBlur={() => setCapturing(false)}
           onKeyDown={handleKeyDown}
-          className={`flex-1 px-3 py-2 rounded-lg border text-sm outline-none cursor-pointer ${
+          className={`flex-1 px-3.5 py-2.5 rounded-xl text-[13px] outline-none cursor-pointer glass-card ${
             capturing
-              ? 'border-accent bg-accent/5 text-accent'
-              : 'border-border bg-surface-2 text-text-primary'
+              ? 'border-accent/40 bg-accent/[0.06] shadow-glow'
+              : ''
           }`}
         >
           {capturing ? (
-            <span className="text-accent animate-pulse">Press a key combo...</span>
+            <span className="text-accent animate-pulse-soft">Press a key combo...</span>
           ) : value ? (
-            <span className="font-mono">{displayHotkey(value)}</span>
+            <span className="font-mono text-text-primary tracking-wider">{displayHotkey(value)}</span>
           ) : (
             <span className="text-text-tertiary">Click to set hotkey</span>
           )}
@@ -109,7 +109,7 @@ export default function HotkeyInput({ value, onChange }: HotkeyInputProps) {
         {value && (
           <button
             onClick={() => onChange(undefined)}
-            className="text-xs text-text-tertiary hover:text-red-400 px-2"
+            className="text-[11px] text-text-tertiary hover:text-danger px-2.5 py-2 rounded-lg hover:bg-danger/10"
           >
             Clear
           </button>

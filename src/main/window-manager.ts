@@ -35,6 +35,9 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
   const runningApps = await SwiftBridge.listApps();
   const assignedPids: Set<number> = new Set();
 
+  // Track how many windows per PID we've used (for same-app multi-slot)
+  const pidWindowIndex: Map<number, number> = new Map();
+
   // Step 1: Move and resize each assigned app
   for (const assignment of setup.assignments) {
     const slot = setup.layout.slots.find(s => s.id === assignment.slotId);
@@ -45,8 +48,11 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
     );
     if (!app) continue; // app not running, skip
 
+    const windowIdx = pidWindowIndex.get(app.pid) || 0;
+    pidWindowIndex.set(app.pid, windowIdx + 1);
+
     const frame = calculateFrame(slot, screen);
-    await SwiftBridge.moveWindow(app.pid, frame.x, frame.y, frame.width, frame.height);
+    await SwiftBridge.moveWindow(app.pid, windowIdx, frame.x, frame.y, frame.width, frame.height);
     assignedPids.add(app.pid);
   }
 
@@ -59,14 +65,19 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
     }
   }
 
-  // Step 3: Focus the first assigned app
-  if (setup.assignments.length > 0) {
-    const firstApp = runningApps.find(
-      a => a.name === setup.assignments[0].appName || a.bundleId === setup.assignments[0].bundleId
+  // Step 3: Focus the first assigned app (bring to front last so it's on top)
+  const focusPids: number[] = [];
+  for (const assignment of setup.assignments) {
+    const app = runningApps.find(
+      a => a.name === assignment.appName || a.bundleId === assignment.bundleId
     );
-    if (firstApp) {
-      await SwiftBridge.focusApp(firstApp.pid);
+    if (app && !focusPids.includes(app.pid)) {
+      focusPids.push(app.pid);
     }
+  }
+  // Focus in reverse order so the first assigned app ends up on top
+  for (let i = focusPids.length - 1; i >= 0; i--) {
+    await SwiftBridge.focusApp(focusPids[i]);
   }
 
   return { success: true };

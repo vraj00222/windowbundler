@@ -31,6 +31,15 @@ export function unregisterHotkey(hotkey: string): void {
   registeredHotkeys.delete(hotkey);
 }
 
+export function unregisterForSetup(setupId: string): void {
+  for (const [key, id] of registeredHotkeys.entries()) {
+    if (id === setupId) {
+      globalShortcut.unregister(key);
+      registeredHotkeys.delete(key);
+    }
+  }
+}
+
 export function unregisterAll(): void {
   globalShortcut.unregisterAll();
   registeredHotkeys.clear();

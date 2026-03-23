@@ -92,27 +92,30 @@ func listApps() -> [AppInfo] {
 
 // MARK: - Move & Resize Window
 
-func moveWindow(pid: Int32, x: Int, y: Int, width: Int, height: Int) -> Bool {
+func moveWindow(pid: Int32, windowIndex: Int, x: Int, y: Int, width: Int, height: Int) -> Bool {
     let app = AXUIElementCreateApplication(pid)
     var windowsRef: CFTypeRef?
 
     let result = AXUIElementCopyAttributeValue(app, kAXWindowsAttribute as CFString, &windowsRef)
-    guard result == .success, let windows = windowsRef as? [AXUIElement], !windows.isEmpty else {
+    guard result == .success, let windows = windowsRef as? [AXUIElement], windowIndex < windows.count else {
         return false
     }
 
-    let window = windows[0] // primary window
+    let window = windows[windowIndex]
+
+    // Set size first so the window can fit, then position
+    var size = CGSize(width: CGFloat(width), height: CGFloat(height))
+    if let sizeValue = AXValueCreate(.cgSize, &size) {
+        AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue)
+    }
+
+    // Small delay to let macOS process the resize before repositioning
+    usleep(50_000) // 50ms
 
     // Set position
     var point = CGPoint(x: CGFloat(x), y: CGFloat(y))
     if let positionValue = AXValueCreate(.cgPoint, &point) {
         AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, positionValue)
-    }
-
-    // Set size
-    var size = CGSize(width: CGFloat(width), height: CGFloat(height))
-    if let sizeValue = AXValueCreate(.cgSize, &size) {
-        AXUIElementSetAttributeValue(window, kAXSizeAttribute as CFString, sizeValue)
     }
 
     return true
@@ -124,7 +127,12 @@ func focusApp(pid: Int32) -> Bool {
     guard let app = NSRunningApplication(processIdentifier: pid) else {
         return false
     }
-    return app.activate(options: [.activateIgnoringOtherApps])
+    if #available(macOS 14.0, *) {
+        app.activate()
+        return true
+    } else {
+        return app.activate(options: [.activateIgnoringOtherApps])
+    }
 }
 
 // MARK: - Hide App
@@ -164,7 +172,7 @@ guard args.count >= 2 else {
     Usage:
       window-helper list-windows
       window-helper list-apps
-      window-helper move <pid> <x> <y> <width> <height>
+      window-helper move <pid> <windowIndex> <x> <y> <width> <height>
       window-helper focus <pid>
       window-helper hide <pid>
       window-helper screen-info
@@ -192,16 +200,17 @@ case "list-apps":
     }
 
 case "move":
-    guard args.count >= 7,
+    guard args.count >= 8,
           let pid = Int32(args[2]),
-          let x = Int(args[3]),
-          let y = Int(args[4]),
-          let w = Int(args[5]),
-          let h = Int(args[6]) else {
-        print("{\"error\": \"Invalid move arguments\"}")
+          let winIdx = Int(args[3]),
+          let x = Int(args[4]),
+          let y = Int(args[5]),
+          let w = Int(args[6]),
+          let h = Int(args[7]) else {
+        print("{\"error\": \"Invalid move arguments. Usage: move <pid> <windowIndex> <x> <y> <width> <height>\"}")
         exit(1)
     }
-    let success = moveWindow(pid: pid, x: x, y: y, width: w, height: h)
+    let success = moveWindow(pid: pid, windowIndex: winIdx, x: x, y: y, width: w, height: h)
     print("{\"success\": \(success)}")
 
 case "focus":

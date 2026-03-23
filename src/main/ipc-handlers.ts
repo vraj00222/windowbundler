@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import { SwiftBridge } from './swift-bridge';
 import { loadSetups, saveSetup, deleteSetup, type Setup } from './setup-store';
 import { activateSetup } from './window-manager';
-import { registerHotkey, unregisterHotkey } from './hotkey-manager';
+import { registerHotkey, unregisterHotkey, unregisterForSetup } from './hotkey-manager';
 
 export function registerIpcHandlers(): void {
   ipcMain.handle('get-windows', async () => {
@@ -22,6 +22,8 @@ export function registerIpcHandlers(): void {
   });
 
   ipcMain.handle('save-setup', (_event, setup: Setup) => {
+    // Unregister old hotkey for this setup first
+    unregisterForSetup(setup.id);
     saveSetup(setup);
     if (setup.hotkey) {
       registerHotkey(setup.id, setup.hotkey);
@@ -29,6 +31,8 @@ export function registerIpcHandlers(): void {
   });
 
   ipcMain.handle('delete-setup', (_event, id: string) => {
+    // Clean up hotkey before deleting
+    unregisterForSetup(id);
     deleteSetup(id);
   });
 

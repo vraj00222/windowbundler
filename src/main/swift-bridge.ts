@@ -65,8 +65,8 @@ export const SwiftBridge = {
     return JSON.parse(json);
   },
 
-  async moveWindow(pid: number, x: number, y: number, width: number, height: number): Promise<boolean> {
-    const json = await runHelper(['move', String(pid), String(x), String(y), String(width), String(height)]);
+  async moveWindow(pid: number, windowIndex: number, x: number, y: number, width: number, height: number): Promise<boolean> {
+    const json = await runHelper(['move', String(pid), String(windowIndex), String(x), String(y), String(width), String(height)]);
     return JSON.parse(json).success;
   },
 

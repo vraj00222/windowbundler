@@ -1,0 +1,7 @@
+node_modules/
+dist/
+release/
+native/window-helper
+.DS_Store
+*.log
+.claude/

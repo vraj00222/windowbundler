@@ -12,7 +12,7 @@ interface SidebarProps {
 
 export default function Sidebar({ setups, selectedId, activeSetupId, onSelect, onActivate, onNew }: SidebarProps) {
   return (
-    <aside className="w-[260px] flex-shrink-0 glass-panel flex flex-col" style={{ borderRight: '0.5px solid rgba(255,255,255,0.06)' }} data-no-drag>
+    <aside className="w-[260px] flex-shrink-0 bg-surface-1 flex flex-col" style={{ borderRight: '0.5px solid rgba(0,0,0,0.08)' }} data-no-drag>
       {/* Header / drag region */}
       <div
         className="h-[52px] flex items-center px-5 border-b border-border"
@@ -47,8 +47,8 @@ export default function Sidebar({ setups, selectedId, activeSetupId, onSelect, o
               onDoubleClick={() => onActivate(setup.id)}
               className={`w-full text-left px-3 py-2.5 rounded-[10px] flex items-center gap-3 group relative animate-slide-in ${
                 isSelected
-                  ? 'bg-white/[0.08] shadow-glass-sm'
-                  : 'hover:bg-white/[0.04]'
+                  ? 'bg-accent/[0.08] shadow-glass-sm'
+                  : 'hover:bg-black/[0.03]'
               }`}
               style={{ animationDelay: `${i * 30}ms` }}
             >
@@ -59,7 +59,7 @@ export default function Sidebar({ setups, selectedId, activeSetupId, onSelect, o
 
               <span className="text-lg flex-shrink-0">{setup.icon}</span>
               <div className="flex-1 min-w-0">
-                <div className={`text-[13px] font-medium truncate ${isSelected ? 'text-text-primary' : 'text-text-secondary'}`}>
+                <div className={`text-[13px] font-medium truncate ${isSelected ? 'text-accent' : 'text-text-primary'}`}>
                   {setup.name}
                 </div>
                 {setup.hotkey && (
@@ -89,7 +89,7 @@ export default function Sidebar({ setups, selectedId, activeSetupId, onSelect, o
         <button
           onClick={onNew}
           className="w-full py-2.5 rounded-[10px] btn-glass text-[13px] font-medium
-            flex items-center justify-center gap-1.5 hover:bg-white/[0.08]"
+            flex items-center justify-center gap-1.5"
         >
           <span className="text-accent text-base leading-none">+</span>
           <span>New Setup</span>

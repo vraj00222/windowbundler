@@ -51,17 +51,17 @@ export default function App() {
   const activeSetup = setups.find(s => s.id === activeSetupId) || null;
 
   return (
-    <div className="flex h-screen select-none overflow-hidden">
+    <div className="flex h-screen select-none overflow-hidden bg-surface-0">
       {/* Accessibility Warning */}
       {!hasAccess && (
-        <div className="absolute top-0 left-0 right-0 z-50 glass-panel px-4 py-2.5 text-center text-[13px] animate-slide-up"
-          style={{ background: 'rgba(255, 179, 0, 0.12)', borderBottom: '0.5px solid rgba(255, 179, 0, 0.2)' }}>
-          <span className="text-amber-300/90">
+        <div className="absolute top-0 left-0 right-0 z-50 px-4 py-2.5 text-center text-[13px] animate-slide-up"
+          style={{ background: 'rgba(255, 204, 0, 0.12)', borderBottom: '1px solid rgba(255, 179, 0, 0.15)' }}>
+          <span className="text-amber-700">
             WindowBundler needs Accessibility permission to manage windows.
           </span>
           <button
             onClick={checkAccess}
-            className="ml-3 text-amber-200 hover:text-white underline underline-offset-2 decoration-amber-400/40"
+            className="ml-3 text-amber-600 hover:text-amber-800 underline underline-offset-2 font-medium"
           >
             Check Again
           </button>
@@ -96,7 +96,7 @@ export default function App() {
       />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto" data-no-drag>
+      <main className="flex-1 overflow-y-auto bg-surface-0" data-no-drag>
         {selectedSetup ? (
           <div className="animate-fade-in">
             <SetupEditor
@@ -110,7 +110,7 @@ export default function App() {
         ) : (
           <div className="flex h-full items-center justify-center">
             <div className="text-center animate-fade-in">
-              <div className="text-5xl mb-5 opacity-40">{'\uD83E\uDE9F'}</div>
+              <div className="text-5xl mb-5 opacity-30">{'\uD83E\uDE9F'}</div>
               <p className="text-[15px] text-text-secondary font-medium">Select a setup or create a new one</p>
               <p className="text-[13px] mt-1.5 text-text-tertiary">
                 Bundle your windows into perfect layouts

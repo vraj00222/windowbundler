@@ -15,15 +15,12 @@ function formatHotkey(e: React.KeyboardEvent): string | null {
 
   const key = e.key;
 
-  // Ignore modifier-only presses
   if (['Meta', 'Control', 'Alt', 'Shift'].includes(key)) {
     return null;
   }
 
-  // Need at least one modifier
   if (parts.length === 0) return null;
 
-  // Map special keys
   const keyMap: Record<string, string> = {
     ' ': 'Space',
     'ArrowUp': 'Up',
@@ -92,10 +89,11 @@ export default function HotkeyInput({ value, onChange }: HotkeyInputProps) {
           onFocus={() => setCapturing(true)}
           onBlur={() => setCapturing(false)}
           onKeyDown={handleKeyDown}
-          className={`flex-1 px-3.5 py-2.5 rounded-xl text-[13px] outline-none cursor-pointer glass-card ${
+          className={`flex-1 px-3.5 py-2.5 rounded-xl text-[13px] outline-none cursor-pointer
+            bg-surface-1 border shadow-card ${
             capturing
-              ? 'border-accent/40 bg-accent/[0.06] shadow-glow'
-              : ''
+              ? 'border-accent/40 ring-2 ring-accent/10 bg-accent/[0.03]'
+              : 'border-border'
           }`}
         >
           {capturing ? (
@@ -109,7 +107,7 @@ export default function HotkeyInput({ value, onChange }: HotkeyInputProps) {
         {value && (
           <button
             onClick={() => onChange(undefined)}
-            className="text-[11px] text-text-tertiary hover:text-danger px-2.5 py-2 rounded-lg hover:bg-danger/10"
+            className="text-[11px] text-text-tertiary hover:text-danger px-2.5 py-2 rounded-lg hover:bg-danger/5 font-medium"
           >
             Clear
           </button>

@@ -22,7 +22,6 @@ export default function SetupEditor({ setup, onSave, onDelete, onActivate }: Set
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // Reset state when setup changes
   useEffect(() => {
     setName(setup.name);
     setIcon(setup.icon);
@@ -34,7 +33,6 @@ export default function SetupEditor({ setup, onSave, onDelete, onActivate }: Set
 
   function handleLayoutChange(newLayout: Layout) {
     setLayout(newLayout);
-    // Clear assignments whose slot IDs no longer exist in the new layout
     const validSlotIds = new Set(newLayout.slots.map(s => s.id));
     setAssignments(prev => prev.filter(a => validSlotIds.has(a.slotId)));
   }
@@ -63,18 +61,17 @@ export default function SetupEditor({ setup, onSave, onDelete, onActivate }: Set
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {/* Emoji picker */}
           <div className="relative">
             <button
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
               className="text-3xl hover:scale-110 active:scale-95 w-12 h-12 flex items-center justify-center rounded-xl
-                bg-white/[0.04] hover:bg-white/[0.08] border border-border"
+                bg-surface-1 hover:bg-surface-2 border border-border shadow-card"
               style={{ transition: 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)' }}
             >
               {icon}
             </button>
             {showEmojiPicker && (
-              <div className="absolute top-full left-0 mt-2 p-2 glass-panel rounded-xl shadow-glass z-20 grid grid-cols-6 gap-1 animate-scale-in">
+              <div className="absolute top-full left-0 mt-2 p-2 bg-white border border-border rounded-xl shadow-glass z-20 grid grid-cols-6 gap-1 animate-scale-in">
                 {EMOJI_OPTIONS.map(e => (
                   <button
                     key={e}
@@ -82,7 +79,7 @@ export default function SetupEditor({ setup, onSave, onDelete, onActivate }: Set
                       setIcon(e);
                       setShowEmojiPicker(false);
                     }}
-                    className="text-xl p-1.5 rounded-lg hover:bg-white/[0.08] active:scale-90"
+                    className="text-xl p-1.5 rounded-lg hover:bg-surface-1 active:scale-90"
                     style={{ transition: 'transform 0.1s ease' }}
                   >
                     {e}
@@ -92,18 +89,16 @@ export default function SetupEditor({ setup, onSave, onDelete, onActivate }: Set
             )}
           </div>
 
-          {/* Name input */}
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="bg-transparent text-[20px] font-semibold text-text-primary outline-none
-              border-b border-transparent focus:border-accent/40 px-1 py-0.5 w-[240px]"
+              border-b-2 border-transparent focus:border-accent/30 px-1 py-0.5 w-[240px]"
             placeholder="Setup name"
           />
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-2">
           <button
             onClick={onActivate}
@@ -115,14 +110,14 @@ export default function SetupEditor({ setup, onSave, onDelete, onActivate }: Set
           {!showDeleteConfirm ? (
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="btn-glass text-danger/80 hover:text-danger hover:bg-danger/10 border-danger/10"
+              className="btn-glass text-danger hover:bg-danger/5 border-danger/15"
             >
               Delete
             </button>
           ) : (
             <button
               onClick={() => { onDelete(); setShowDeleteConfirm(false); }}
-              className="btn-glass bg-danger/15 text-danger border-danger/20 animate-scale-in"
+              className="btn-glass bg-danger/8 text-danger border-danger/15 animate-scale-in"
             >
               Confirm?
             </button>
@@ -130,30 +125,24 @@ export default function SetupEditor({ setup, onSave, onDelete, onActivate }: Set
         </div>
       </div>
 
-      {/* Divider */}
       <div className="h-px bg-border" />
 
-      {/* Layout Picker */}
       <LayoutPicker selected={layout.preset} onChange={handleLayoutChange} />
 
-      {/* Window Assignments */}
       <WindowSelector
         slots={layout.slots}
         assignments={assignments}
         onChange={setAssignments}
       />
 
-      {/* Hotkey */}
       <HotkeyInput value={hotkey} onChange={setHotkey} />
 
-      {/* Save button */}
       {hasChanges && (
         <div className="sticky bottom-0 pt-4 pb-2 animate-slide-up">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#141428] via-[#141428]/80 to-transparent -z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent -z-10" />
           <button
             onClick={handleSave}
-            className="w-full py-3 rounded-xl btn-primary text-[14px] font-semibold shadow-glow
-              hover:shadow-[0_0_32px_rgba(0,122,255,0.3)]"
+            className="w-full py-3 rounded-xl btn-primary text-[14px] font-semibold shadow-glow"
           >
             Save Changes
           </button>

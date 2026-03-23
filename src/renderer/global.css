@@ -2,30 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles */
+/* Base styles — light Apple aesthetic */
 html, body, #root {
   height: 100%;
   margin: 0;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.92);
+  background: #FFFFFF;
+  color: #1D1D1F;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Frosted glass background for the entire app */
 body {
   background: linear-gradient(
-    145deg,
-    #1a1a2e 0%,
-    #16162a 25%,
-    #0f0f1e 50%,
-    #141428 75%,
-    #1a1a30 100%
+    180deg,
+    #FFFFFF 0%,
+    #F8F8FA 50%,
+    #F5F5F7 100%
   );
 }
 
-/* Custom scrollbar - ultra thin & subtle */
+/* Custom scrollbar - thin & light */
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -33,21 +30,20 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.10);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.18);
 }
 
-/* Smooth transitions globally — only visual properties */
+/* Smooth transitions — Apple-like cubic-bezier */
 * {
   transition-property: background-color, border-color, color, opacity, box-shadow, transform;
   transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Disable transitions for layout-affecting properties */
 *:focus {
   outline: none;
 }
@@ -55,50 +51,50 @@ body {
 /* Glass panel utility */
 @layer components {
   .glass-panel {
-    background: rgba(30, 30, 35, 0.72);
+    background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 0.5px solid rgba(255, 255, 255, 0.06);
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
     border-radius: 12px;
   }
 
   .btn-primary {
-    background: linear-gradient(180deg, #0A84FF 0%, #007AFF 100%);
+    background: linear-gradient(180deg, #3898FF 0%, #007AFF 100%);
     color: white;
     font-weight: 500;
     border-radius: 8px;
     padding: 6px 16px;
     font-size: 13px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 122, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     border: none;
   }
   .btn-primary:hover {
-    background: linear-gradient(180deg, #3BA0FF 0%, #0A84FF 100%);
-    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: linear-gradient(180deg, #5AADFF 0%, #0A84FF 100%);
+    box-shadow: 0 3px 12px rgba(0, 122, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
   .btn-primary:active {
     transform: scale(0.98);
   }
 
   .btn-glass {
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.03);
+    color: #1D1D1F;
     font-weight: 500;
     border-radius: 8px;
     padding: 6px 16px;
     font-size: 13px;
-    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    border: 0.5px solid rgba(0, 0, 0, 0.08);
   }
   .btn-glass:hover {
-    background: rgba(255, 255, 255, 0.10);
-    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.12);
   }
   .btn-glass:active {
     transform: scale(0.98);
@@ -107,6 +103,12 @@ body {
 
 /* Selection color */
 ::selection {
-  background: rgba(0, 122, 255, 0.3);
-  color: white;
+  background: rgba(0, 122, 255, 0.2);
+  color: #1D1D1F;
+}
+
+/* Native select dropdown styling */
+select option {
+  background: #FFFFFF;
+  color: #1D1D1F;
 }

@@ -17,7 +17,7 @@ function createWindow(): void {
     trafficLightPosition: { x: 16, y: 16 },
     vibrancy: 'under-window',
     visualEffectState: 'active',
-    backgroundColor: '#0a0a0b',
+    backgroundColor: '#FFFFFF',
     show: false,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),

@@ -21,7 +21,7 @@ export default function ActiveSetupBanner({ setup }: ActiveSetupBannerProps) {
 
   return (
     <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
-      <div className="glass-panel rounded-full px-5 py-2.5 flex items-center gap-2.5 shadow-glass animate-glow-pulse">
+      <div className="bg-white/90 backdrop-blur-xl rounded-full px-5 py-2.5 flex items-center gap-2.5 shadow-glass border border-border">
         <div className="w-2 h-2 rounded-full bg-success animate-pulse-soft" />
         <span className="text-[12px] text-text-primary font-medium">{setup.icon} {setup.name}</span>
         <span className="text-[11px] text-text-tertiary">activated</span>

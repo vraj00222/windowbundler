@@ -51,7 +51,7 @@ export default function WindowSelector({ slots, assignments, onChange }: WindowS
         </label>
         <button
           onClick={fetchApps}
-          className="text-[11px] text-accent/70 hover:text-accent flex items-center gap-1"
+          className="text-[11px] text-accent/70 hover:text-accent flex items-center gap-1 font-medium"
           disabled={loading}
         >
           {loading ? (
@@ -73,22 +73,19 @@ export default function WindowSelector({ slots, assignments, onChange }: WindowS
           return (
             <div
               key={slot.id}
-              className="flex items-center gap-3 p-3 rounded-xl glass-card group animate-slide-up"
+              className="flex items-center gap-3 p-3 rounded-xl bg-surface-1 border border-border group animate-slide-up shadow-card"
               style={{ animationDelay: `${i * 40}ms` }}
             >
-              {/* Slot indicator */}
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-mono uppercase flex-shrink-0 ${
-                assigned ? 'bg-accent/15 text-accent border border-accent/20' : 'bg-white/[0.04] text-text-tertiary border border-border'
+                assigned ? 'bg-accent/10 text-accent border border-accent/15' : 'bg-surface-2 text-text-tertiary border border-border'
               }`}>
                 {slot.id.split('-').map(w => w[0]).join('')}
               </div>
 
-              {/* Slot name */}
               <div className="text-[12px] text-text-secondary w-[70px] flex-shrink-0 capitalize font-medium">
                 {slot.id.replace(/-/g, ' ')}
               </div>
 
-              {/* App dropdown */}
               <select
                 value={assigned?.appName || ''}
                 onChange={(e) => {
@@ -100,11 +97,11 @@ export default function WindowSelector({ slots, assignments, onChange }: WindowS
                     if (app) assignApp(slot.id, app);
                   }
                 }}
-                className="flex-1 bg-white/[0.03] border border-border rounded-lg px-2.5 py-2 text-[13px]
-                  text-text-primary outline-none focus:border-accent/40 focus:bg-white/[0.05]
-                  appearance-none cursor-pointer"
+                className="flex-1 bg-white border border-border rounded-lg px-2.5 py-2 text-[13px]
+                  text-text-primary outline-none focus:border-accent/40 focus:ring-2 focus:ring-accent/10
+                  appearance-none cursor-pointer shadow-card"
                 style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='rgba(255,255,255,0.3)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='rgba(0,0,0,0.25)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")`,
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'right 10px center',
                   paddingRight: '28px',
@@ -123,7 +120,7 @@ export default function WindowSelector({ slots, assignments, onChange }: WindowS
       </div>
 
       {slots.length === 0 && (
-        <div className="text-center py-8 glass-card animate-fade-in">
+        <div className="text-center py-8 bg-surface-1 rounded-xl border border-border animate-fade-in">
           <div className="text-2xl opacity-30 mb-2">{'\uD83D\uDDBC\uFE0F'}</div>
           <p className="text-text-tertiary text-[12px]">
             Select a layout to assign apps to slots

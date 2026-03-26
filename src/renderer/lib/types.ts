@@ -36,6 +36,7 @@ export interface Setup {
   layout: Layout;
   assignments: AppAssignment[];
   hotkey?: string;          // e.g., "CommandOrControl+Shift+1"
+  isDefault?: boolean;      // true for the "General" default setup
   createdAt: number;
   updatedAt: number;
 }

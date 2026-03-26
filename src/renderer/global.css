@@ -2,113 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles — light Apple aesthetic */
 html, body, #root {
   height: 100%;
   margin: 0;
-  background: #FFFFFF;
-  color: #1D1D1F;
+  background: var(--bg, #1a1a1e);
+  color: var(--text-primary, rgba(255, 255, 255, 0.92));
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  background: linear-gradient(
-    180deg,
-    #FFFFFF 0%,
-    #F8F8FA 50%,
-    #F5F5F7 100%
-  );
-}
-
-/* Custom scrollbar - thin & light */
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.10);
+  background: var(--scroll-thumb, rgba(255, 255, 255, 0.10));
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.18);
+  background: var(--scroll-thumb-hover, rgba(255, 255, 255, 0.18));
 }
 
-/* Smooth transitions — Apple-like cubic-bezier */
 * {
   transition-property: background-color, border-color, color, opacity, box-shadow, transform;
-  transition-duration: 200ms;
+  transition-duration: 150ms;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-*:focus {
-  outline: none;
-}
+*:focus { outline: none; }
 
-/* Glass panel utility */
 @layer components {
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 0.5px solid rgba(0, 0, 0, 0.06);
-  }
-
-  .glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 0.5px solid rgba(0, 0, 0, 0.06);
-    border-radius: 12px;
-  }
-
   .btn-primary {
-    background: linear-gradient(180deg, #3898FF 0%, #007AFF 100%);
+    background: var(--btn-primary-bg);
     color: white;
     font-weight: 500;
     border-radius: 8px;
     padding: 6px 16px;
     font-size: 13px;
-    box-shadow: 0 1px 3px rgba(0, 122, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: var(--btn-primary-shadow);
     border: none;
+    cursor: pointer;
   }
-  .btn-primary:hover {
-    background: linear-gradient(180deg, #5AADFF 0%, #0A84FF 100%);
-    box-shadow: 0 3px 12px rgba(0, 122, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  }
-  .btn-primary:active {
-    transform: scale(0.98);
-  }
+  .btn-primary:hover { background: var(--btn-primary-hover-bg); }
+  .btn-primary:active { transform: scale(0.98); }
 
   .btn-glass {
-    background: rgba(0, 0, 0, 0.03);
-    color: #1D1D1F;
+    background: var(--btn-glass-bg);
+    color: var(--btn-glass-color);
     font-weight: 500;
     border-radius: 8px;
     padding: 6px 16px;
     font-size: 13px;
-    border: 0.5px solid rgba(0, 0, 0, 0.08);
+    border: 0.5px solid var(--btn-glass-border);
+    cursor: pointer;
   }
-  .btn-glass:hover {
-    background: rgba(0, 0, 0, 0.06);
-    border-color: rgba(0, 0, 0, 0.12);
-  }
-  .btn-glass:active {
-    transform: scale(0.98);
-  }
+  .btn-glass:hover { background: var(--btn-glass-hover-bg); }
+  .btn-glass:active { transform: scale(0.98); }
 }
 
-/* Selection color */
 ::selection {
-  background: rgba(0, 122, 255, 0.2);
-  color: #1D1D1F;
+  background: var(--selection-bg, rgba(10, 132, 255, 0.35));
+  color: var(--selection-color, white);
 }
 
-/* Native select dropdown styling */
 select option {
-  background: #FFFFFF;
-  color: #1D1D1F;
+  background: var(--select-option-bg, #1c1c20);
+  color: var(--text-primary, rgba(255, 255, 255, 0.92));
+}
+
+select:focus {
+  border-color: var(--accent, #0A84FF) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, #0A84FF) 15%, transparent);
 }

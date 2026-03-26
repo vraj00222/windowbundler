@@ -25,6 +25,10 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
     return { success: false, error: 'Setup not found' };
   }
 
+  if (setup.assignments.length === 0) {
+    return { success: false, error: 'No apps assigned to this setup' };
+  }
+
   // Check accessibility
   const trusted = await SwiftBridge.checkAccessibility();
   if (!trusted) {
@@ -52,20 +56,28 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
     pidWindowIndex.set(app.pid, windowIdx + 1);
 
     const frame = calculateFrame(slot, screen);
-    await SwiftBridge.moveWindow(app.pid, windowIdx, frame.x, frame.y, frame.width, frame.height);
-    assignedPids.add(app.pid);
+    try {
+      await SwiftBridge.moveWindow(app.pid, windowIdx, frame.x, frame.y, frame.width, frame.height);
+      assignedPids.add(app.pid);
+    } catch (err) {
+      console.error(`Failed to move window for ${assignment.appName}:`, err);
+    }
   }
 
-  // Step 2: Hide all other regular apps
+  // Step 2: Hide all other regular apps (not assigned, not Finder, not ourselves)
   for (const app of runningApps) {
     if (!assignedPids.has(app.pid)) {
-      if (app.bundleId !== 'com.apple.finder' && app.name !== 'WindowBundler') {
-        await SwiftBridge.hideApp(app.pid);
+      if (app.bundleId !== 'com.apple.finder' && app.name !== 'WindowBundler' && app.name !== 'Electron') {
+        try {
+          await SwiftBridge.hideApp(app.pid);
+        } catch (err) {
+          // Non-critical, some apps resist hiding
+        }
       }
     }
   }
 
-  // Step 3: Focus the first assigned app (bring to front last so it's on top)
+  // Step 3: Focus the assigned apps — reverse order so the first one ends up on top
   const focusPids: number[] = [];
   for (const assignment of setup.assignments) {
     const app = runningApps.find(
@@ -75,9 +87,12 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
       focusPids.push(app.pid);
     }
   }
-  // Focus in reverse order so the first assigned app ends up on top
   for (let i = focusPids.length - 1; i >= 0; i--) {
-    await SwiftBridge.focusApp(focusPids[i]);
+    try {
+      await SwiftBridge.focusApp(focusPids[i]);
+    } catch (err) {
+      console.error(`Failed to focus app pid ${focusPids[i]}:`, err);
+    }
   }
 
   return { success: true };

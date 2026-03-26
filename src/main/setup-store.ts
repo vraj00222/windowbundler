@@ -13,6 +13,7 @@ export interface Setup {
   };
   assignments: Array<{ slotId: string; appName: string; bundleId?: string }>;
   hotkey?: string;
+  isDefault?: boolean;
   createdAt: number;
   updatedAt: number;
 }

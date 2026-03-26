@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ipc } from './lib/ipc';
+import { useTheme } from './lib/theme';
 import type { Setup } from './lib/types';
 import Sidebar from './components/Sidebar';
 import SetupEditor from './components/SetupEditor';
 import ActiveSetupBanner from './components/ActiveSetupBanner';
 
 export default function App() {
+  const { colors } = useTheme();
   const [setups, setSetups] = useState<Setup[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activeSetupId, setActiveSetupId] = useState<string | null>(null);
@@ -18,7 +20,6 @@ export default function App() {
 
   async function loadSetups() {
     let data = await ipc.getSetups();
-    // Ensure a "General" default setup exists
     if (!data.some(s => s.isDefault)) {
       const generalSetup: Setup = {
         id: 'default-general',
@@ -72,7 +73,7 @@ export default function App() {
   const activeSetup = setups.find(s => s.id === activeSetupId) || null;
 
   return (
-    <div className="flex h-screen select-none overflow-hidden bg-[#1a1a1e]">
+    <div className="flex h-screen select-none overflow-hidden" style={{ background: colors.bg }}>
       {/* Accessibility Warning */}
       {!hasAccess && (
         <div className="absolute top-0 left-0 right-0 z-50 px-4 py-2.5 text-center text-[13px] animate-slide-up"
@@ -89,7 +90,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Sidebar */}
       <Sidebar
         setups={setups}
         selectedId={selectedId}
@@ -116,8 +116,7 @@ export default function App() {
         }}
       />
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-[#141416]" data-no-drag>
+      <main className="flex-1 overflow-y-auto" style={{ background: colors.mainBg }} data-no-drag>
         {selectedSetup ? (
           <div className="animate-fade-in">
             <SetupEditor
@@ -132,8 +131,10 @@ export default function App() {
           <div className="flex h-full items-center justify-center">
             <div className="text-center animate-fade-in">
               <div className="text-5xl mb-5 opacity-20">{'\uD83E\uDE9F'}</div>
-              <p className="text-[15px] text-text-secondary font-medium">Select a setup or create a new one</p>
-              <p className="text-[13px] mt-1.5 text-text-tertiary">
+              <p className="text-[15px] font-medium" style={{ color: colors.textSecondary }}>
+                Select a setup or create a new one
+              </p>
+              <p className="text-[13px] mt-1.5" style={{ color: colors.textTertiary }}>
                 Bundle your windows into perfect layouts
               </p>
             </div>
@@ -141,7 +142,6 @@ export default function App() {
         )}
       </main>
 
-      {/* Active setup indicator */}
       <ActiveSetupBanner setup={activeSetup} />
     </div>
   );

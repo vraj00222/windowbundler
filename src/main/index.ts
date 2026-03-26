@@ -6,6 +6,7 @@ import { reregisterAll } from './hotkey-manager';
 import { loadSetups } from './setup-store';
 
 let mainWindow: BrowserWindow | null = null;
+let isQuitting = false;
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
@@ -26,11 +27,9 @@ function createWindow(): void {
     },
   });
 
-  // In dev, try Vite dev server first; fall back to built files
   const isDev = !app.isPackaged;
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173').catch(() => {
-      // Vite dev server not running — load built renderer
       mainWindow!.loadFile(path.join(__dirname, '../../renderer/index.html'));
     });
   } else {
@@ -41,7 +40,14 @@ function createWindow(): void {
     mainWindow?.show();
   });
 
-  // Open external links in browser
+  // Close button hides the window instead of quitting — app stays in dock & tray
+  mainWindow.on('close', (e) => {
+    if (!isQuitting) {
+      e.preventDefault();
+      mainWindow?.hide();
+    }
+  });
+
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' };
@@ -70,25 +76,22 @@ app.whenReady().then(() => {
     createTray(mainWindow);
   }
 
-  // Re-register saved hotkeys
   const setups = loadSetups();
   reregisterAll(setups);
 });
 
 app.on('window-all-closed', () => {
-  // Don't quit on macOS — keep tray alive
+  // Don't quit — keep running in background with tray
 });
 
 app.on('activate', () => {
+  // Clicking dock icon re-shows window
   if (mainWindow) {
     mainWindow.show();
+    mainWindow.focus();
   }
 });
 
-app.on('will-quit', () => {
-  // Hotkeys cleaned up automatically
+app.on('before-quit', () => {
+  isQuitting = true;
 });
-
-// Hide dock icon (menubar-only app)
-// Uncomment this after you're done debugging:
-// app.dock?.hide();

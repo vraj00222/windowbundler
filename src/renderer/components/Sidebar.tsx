@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import type { Setup } from '../lib/types';
 import { useTheme, THEME_LABELS, type ThemeId } from '../lib/theme';
 
@@ -15,7 +15,6 @@ const THEME_OPTIONS: ThemeId[] = ['light', 'dark', 'glass'];
 
 export default function Sidebar({ setups, selectedId, activeSetupId, onSelect, onActivate, onNew }: SidebarProps) {
   const { theme, colors, setTheme } = useTheme();
-  const [showThemePicker, setShowThemePicker] = useState(false);
 
   return (
     <aside
@@ -56,14 +55,11 @@ export default function Sidebar({ setups, selectedId, activeSetupId, onSelect, o
               onClick={() => onSelect(setup.id)}
               onDoubleClick={() => onActivate(setup.id)}
               className="w-full text-left px-3 py-2.5 rounded-[10px] flex items-center gap-3 group relative mb-1"
-              style={{
-                background: isSelected ? colors.accentMuted : 'transparent',
-              }}
+              style={{ background: isSelected ? colors.accentMuted : 'transparent' }}
             >
               {isActive && (
                 <div className="absolute left-0.5 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-full animate-glow-pulse" style={{ background: colors.accent }} />
               )}
-              <span className="text-lg flex-shrink-0">{setup.icon}</span>
               <div className="flex-1 min-w-0">
                 <div className="text-[13px] font-medium truncate" style={{ color: isSelected ? colors.accent : colors.textPrimary }}>
                   {setup.name}
@@ -102,7 +98,6 @@ export default function Sidebar({ setups, selectedId, activeSetupId, onSelect, o
               {isActive && (
                 <div className="absolute left-0.5 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-full animate-glow-pulse" style={{ background: colors.accent }} />
               )}
-              <span className="text-lg flex-shrink-0">{setup.icon}</span>
               <div className="flex-1 min-w-0">
                 <div className="text-[13px] font-medium truncate" style={{ color: isSelected ? colors.accent : colors.textPrimary }}>
                   {setup.name}
@@ -124,49 +119,27 @@ export default function Sidebar({ setups, selectedId, activeSetupId, onSelect, o
         })}
       </div>
 
-      {/* Footer: Theme switcher + New Setup */}
-      <div className="p-3 space-y-2" style={{ borderTop: `0.5px solid ${colors.border}` }}>
-        {/* Theme Switcher */}
-        <div className="relative">
-          <button
-            onClick={() => setShowThemePicker(!showThemePicker)}
-            className="w-full py-2 px-3 rounded-[10px] text-[12px] font-medium flex items-center justify-between"
-            style={{
-              background: colors.cardBg,
-              color: colors.textSecondary,
-              border: `0.5px solid ${colors.border}`,
-            }}
-          >
-            <span className="flex items-center gap-2">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="5"/>
-                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-              </svg>
-              Theme
-            </span>
-            <span style={{ color: colors.accent }}>{THEME_LABELS[theme]}</span>
-          </button>
-          {showThemePicker && (
-            <div
-              className="absolute bottom-full left-0 right-0 mb-1 rounded-xl overflow-hidden shadow-glass animate-scale-in z-30"
-              style={{ background: colors.emojiPickerBg, border: `0.5px solid ${colors.border}` }}
+      {/* Footer */}
+      <div className="p-3 space-y-2.5" style={{ borderTop: `0.5px solid ${colors.border}` }}>
+        {/* Theme segmented control */}
+        <div
+          className="flex rounded-lg p-0.5"
+          style={{ background: colors.cardBg, border: `0.5px solid ${colors.border}` }}
+        >
+          {THEME_OPTIONS.map(t => (
+            <button
+              key={t}
+              onClick={() => setTheme(t)}
+              className="flex-1 py-1.5 rounded-md text-[11px] font-medium text-center"
+              style={{
+                background: theme === t ? colors.accent : 'transparent',
+                color: theme === t ? '#fff' : colors.textTertiary,
+                transition: 'all 0.15s ease',
+              }}
             >
-              {THEME_OPTIONS.map(t => (
-                <button
-                  key={t}
-                  onClick={() => { setTheme(t); setShowThemePicker(false); }}
-                  className="w-full text-left px-3 py-2 text-[12px] font-medium flex items-center justify-between"
-                  style={{
-                    color: theme === t ? colors.accent : colors.textPrimary,
-                    background: theme === t ? colors.accentMuted : 'transparent',
-                  }}
-                >
-                  {THEME_LABELS[t]}
-                  {theme === t && <span style={{ color: colors.accent }}>&#10003;</span>}
-                </button>
-              ))}
-            </div>
-          )}
+              {THEME_LABELS[t]}
+            </button>
+          ))}
         </div>
 
         {/* New Setup button */}

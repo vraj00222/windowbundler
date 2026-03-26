@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles */
 html, body, #root {
   height: 100%;
   margin: 0;
@@ -13,13 +12,8 @@ html, body, #root {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--scroll-thumb, rgba(255, 255, 255, 0.10));
   border-radius: 10px;
@@ -28,29 +22,15 @@ html, body, #root {
   background: var(--scroll-thumb-hover, rgba(255, 255, 255, 0.18));
 }
 
-/* Smooth transitions */
 * {
   transition-property: background-color, border-color, color, opacity, box-shadow, transform;
-  transition-duration: 200ms;
+  transition-duration: 150ms;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-*:focus {
-  outline: none;
-}
+*:focus { outline: none; }
 
 @layer components {
-  .glass-panel {
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
-  }
-
-  .glass-card {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 12px;
-  }
-
   .btn-primary {
     background: var(--btn-primary-bg);
     color: white;
@@ -60,13 +40,10 @@ html, body, #root {
     font-size: 13px;
     box-shadow: var(--btn-primary-shadow);
     border: none;
+    cursor: pointer;
   }
-  .btn-primary:hover {
-    background: var(--btn-primary-hover-bg);
-  }
-  .btn-primary:active {
-    transform: scale(0.98);
-  }
+  .btn-primary:hover { background: var(--btn-primary-hover-bg); }
+  .btn-primary:active { transform: scale(0.98); }
 
   .btn-glass {
     background: var(--btn-glass-bg);
@@ -76,13 +53,10 @@ html, body, #root {
     padding: 6px 16px;
     font-size: 13px;
     border: 0.5px solid var(--btn-glass-border);
+    cursor: pointer;
   }
-  .btn-glass:hover {
-    background: var(--btn-glass-hover-bg);
-  }
-  .btn-glass:active {
-    transform: scale(0.98);
-  }
+  .btn-glass:hover { background: var(--btn-glass-hover-bg); }
+  .btn-glass:active { transform: scale(0.98); }
 }
 
 ::selection {
@@ -93,4 +67,9 @@ html, body, #root {
 select option {
   background: var(--select-option-bg, #1c1c20);
   color: var(--text-primary, rgba(255, 255, 255, 0.92));
+}
+
+select:focus {
+  border-color: var(--accent, #0A84FF) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, #0A84FF) 15%, transparent);
 }

@@ -67,7 +67,8 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
   // Step 2: Hide all other regular apps (not assigned, not Finder, not ourselves)
   for (const app of runningApps) {
     if (!assignedPids.has(app.pid)) {
-      if (app.bundleId !== 'com.apple.finder' && app.name !== 'WindowBundler' && app.name !== 'Electron') {
+      const isOurApp = app.name === 'WindowBundler' || app.name === 'Electron' || app.bundleId === 'com.vraj.windowbundler';
+      if (app.bundleId !== 'com.apple.finder' && !isOurApp) {
         try {
           await SwiftBridge.hideApp(app.pid);
         } catch (err) {

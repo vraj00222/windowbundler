@@ -5,6 +5,9 @@ import { createTray } from './tray';
 import { reregisterAll } from './hotkey-manager';
 import { loadSetups } from './setup-store';
 
+// Set app name so dock/menu shows "WindowBundler" instead of "Electron" in dev
+app.name = 'WindowBundler';
+
 let mainWindow: BrowserWindow | null = null;
 let isQuitting = false;
 
@@ -19,6 +22,7 @@ function createWindow(): void {
     vibrancy: 'under-window',
     visualEffectState: 'active',
     backgroundColor: '#1a1a1e',
+    title: 'WindowBundler',
     show: false,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),

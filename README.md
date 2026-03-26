@@ -1,153 +1,78 @@
 # WindowBundler
 
-A macOS desktop app that lets you group open windows into named **setups** (workspaces), snap them into split-screen layouts, and switch between setups with one click or a global hotkey.
+A macOS app that groups your open windows into named **setups**, snaps them into split-screen layouts, and lets you switch between setups with one click or a global hotkey. Close the window and it keeps running in the background — your hotkeys stay active.
 
-Built with **Electron + TypeScript + React + Tailwind CSS + Swift** native helper.
+Built with Electron, React, TypeScript, Tailwind CSS, and a native Swift helper.
 
 ---
 
-## What It Does
+## Install
 
-- **Detect** all open windows across every running app on macOS
-- **Bundle** windows into named setups — pick which apps belong together
-- **Layout** each setup with split-screen halves, thirds, quadrants, or custom grids
-- **Activate** a setup with one click or global hotkey — windows snap into position, everything else hides
-- **Tray icon** in the menubar for quick access (no dock clutter)
-- **Persist** setups locally so they survive restarts
+Download the latest `.dmg` from [Releases](https://github.com/vraj00222/windowbundler/releases), open it, and drag **WindowBundler** to Applications.
 
-### Example Setups
+On first launch, grant **Accessibility** permission when prompted:
+**System Settings > Privacy & Security > Accessibility** > toggle on WindowBundler.
+
+### Build from source
+
+```bash
+git clone git@github.com:vraj00222/windowbundler.git
+cd windowbundler
+npm install        # also compiles the native Swift helper
+npm run dev        # development mode
+npm run package    # builds .dmg to release/
+```
+
+Requires macOS, Node.js 18+, and Xcode Command Line Tools.
+
+---
+
+## How It Works
+
+1. **Create a setup** — give it a name, pick a layout (halves, thirds, quadrants, main+sidebar)
+2. **Assign apps** — choose which running apps go in each slot
+3. **Activate** — click the button or press your hotkey. Windows snap into position, everything else hides.
+
+The app stays in your dock and menu bar tray. Closing the window doesn't quit it — hotkeys and tray access keep working.
+
+### Example setups
 
 | Setup | Layout |
 |-------|--------|
-| **Writing** | PowerPoint left half, Word right half |
-| **Coding** | VS Code left 60%, Chrome right 40% |
-| **Research** | Browser full screen |
-| **Design** | Figma left, Slack bottom-right, Notes top-right |
+| Coding | VS Code left 65%, Chrome right 35% |
+| Writing | Docs left half, Notes right half |
+| Research | Browser full width, two columns |
+| Design | Figma left, Slack top-right, Notes bottom-right |
 
 ---
 
-## UI
+## Features
 
-WindowBundler uses a clean, minimal **white/light Apple-inspired** interface:
-
-- **Sidebar** — lists all saved setups with quick-activate buttons
-- **Setup Editor** — name your setup, pick apps, choose a layout, assign a hotkey
-- **Layout Picker** — visual grid selector showing layout previews (halves, thirds, quadrants, custom)
-- **Window Selector** — shows all running apps with checkboxes to include in your setup
-- **Hotkey Input** — capture any keyboard shortcut combo to activate a setup globally
-- **Active Setup Banner** — shows which setup is currently active
-
-The UI is keyboard-first and designed to stay out of your way.
+- **3 themes** — Light, Dark, and Glass. Switch instantly from the sidebar.
+- **Layout picker** — visual previews for 5 built-in layouts (left/right, top/bottom, thirds, quadrants, main+sidebar)
+- **Global hotkeys** — assign a keyboard shortcut to any setup, works system-wide even when the app is hidden
+- **Menu bar tray** — quick-access dropdown to activate setups or open the window
+- **Default setup** — a pinned "General" setup that's always available
+- **Background mode** — closing the window hides it; the app keeps running for hotkeys and tray
+- **Persistent storage** — setups saved locally as JSON, survive restarts
+- **Single instance** — opening the app again brings the existing window to front
 
 ---
 
-## Getting Started
-
-### Prerequisites
-
-- **macOS** (required — uses native Accessibility APIs)
-- **Node.js** v18+
-- **Xcode Command Line Tools** (`xcode-select --install`)
-- **Swift** (comes with Xcode CLT)
-
-### Install & Run
-
-```bash
-# Clone the repo
-git clone git@github.com:vraj00222/windowbundler.git
-cd windowbundler
-
-# Install dependencies (also compiles the Swift native helper)
-npm install
-
-# Start in dev mode
-npm run dev
-```
-
-### Grant Accessibility Permission
-
-On first launch, macOS will prompt you to grant Accessibility access. This is required for WindowBundler to detect, move, and resize windows.
-
-**System Settings > Privacy & Security > Accessibility** — toggle on the app.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Desktop shell | Electron 28 |
-| UI framework | React 18 + TypeScript |
-| Styling | Tailwind CSS 3 |
-| Build tooling | Vite 5 + electron-builder |
-| Native bridge | Swift (compiled binary using macOS Accessibility API) |
-| Storage | Local JSON via electron-store |
-
-### Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────────────┐
-│                 Electron                     │
-│  ┌──────────┐    IPC    ┌────────────────┐  │
-│  │ Renderer │◄────────►│  Main Process   │  │
-│  │ (React)  │           │                │  │
-│  └──────────┘           │  ┌───────────┐ │  │
-│                         │  │Swift Bridge│ │  │
-│                         │  └─────┬─────┘ │  │
-│                         └────────┼───────┘  │
-└────────────────────────────────┼────────────┘
-                                 │ spawn
-                        ┌────────▼────────┐
-                        │  window-helper  │
-                        │  (Swift binary) │
-                        └─────────────────┘
-                                 │
-                        macOS Accessibility API
+Electron
+  Renderer (React + Tailwind)  <-- IPC -->  Main Process
+                                               |
+                                          Swift Bridge
+                                               |
+                                        window-helper binary
+                                               |
+                                     macOS Accessibility API
 ```
 
-The Swift helper supports three commands:
-- `list` — returns JSON array of all open windows
-- `move <pid> <windowId> <x> <y> <w> <h>` — repositions a window
-- `focus <pid>` — brings an app to the front
-
----
-
-## Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start Electron + Vite in dev mode |
-| `npm run build` | Build native helper + renderer + main process |
-| `npm run package` | Build and package into a `.dmg` |
-| `npm run build:native` | Compile the Swift helper binary |
-
----
-
-## Current Features (v1.0)
-
-- [x] Detect all open windows via native macOS Accessibility API
-- [x] Create, edit, and delete named setups
-- [x] Assign apps/windows to setups
-- [x] Visual layout picker (halves, thirds, quadrants, custom grids)
-- [x] One-click setup activation — windows snap into position
-- [x] Global hotkey support per setup
-- [x] Menubar tray icon with quick-access dropdown
-- [x] Persistent storage (setups survive restarts)
-- [x] Clean white/light Apple-themed UI
-- [x] Accessibility permission check with guided setup
-
-## Upcoming Features
-
-- [ ] Custom grid layouts — drag to define arbitrary zones
-- [ ] Multi-monitor support — assign setups to specific displays
-- [ ] Auto-launch apps — if an app in a setup isn't running, open it
-- [ ] Setup import/export — share setups as JSON files
-- [ ] Window memory — remember and restore exact window sizes per app
-- [ ] Quick switcher — `Cmd+Space`-style popup to search and activate setups
-- [ ] Animations — smooth window transitions when switching setups
-- [ ] Auto-activate — trigger setups based on time of day or connected displays
-- [ ] Menu bar widget — show active setup name in the menu bar
-- [ ] Drag-and-drop reordering in the sidebar
+The native Swift binary handles window detection (`list-apps`), positioning (`move`), focusing (`focus`), and hiding (`hide`) through the macOS Accessibility API. The Electron main process spawns it as a child process and communicates via JSON over stdout.
 
 ---
 
@@ -155,31 +80,47 @@ The Swift helper supports three commands:
 
 ```
 windowbundler/
-├── src/
-│   ├── main/                  # Electron main process
-│   │   ├── index.ts           # App entry point
-│   │   ├── tray.ts            # Menubar tray icon + menu
-│   │   ├── ipc-handlers.ts    # IPC handlers (renderer ↔ main)
-│   │   ├── window-manager.ts  # Core window detection/movement logic
-│   │   ├── setup-store.ts     # Setup CRUD (JSON persistence)
-│   │   ├── hotkey-manager.ts  # Global hotkey registration
-│   │   └── swift-bridge.ts    # Spawns Swift helper, parses output
-│   │
-│   ├── renderer/              # React UI
-│   │   ├── App.tsx            # Root component
-│   │   ├── components/        # UI components
-│   │   ├── lib/               # Types, IPC wrappers, layout presets
-│   │   └── global.css         # Tailwind + custom styles
-│   │
-│   └── preload/               # Electron preload script
-│       └── index.ts
-│
-├── native/                    # Swift native helper
-│   ├── WindowHelper.swift
-│   └── build.sh
-│
-└── electron-builder.yml       # Packaging config
+  src/
+    main/              Electron main process
+      index.ts          App entry, window, tray, lifecycle
+      swift-bridge.ts   Spawns native helper
+      window-manager.ts Setup activation logic
+      setup-store.ts    JSON persistence
+      hotkey-manager.ts Global shortcuts
+      ipc-handlers.ts   IPC wiring
+      tray.ts           Menu bar tray
+    renderer/           React UI
+      App.tsx
+      components/       Sidebar, SetupEditor, LayoutPicker, etc.
+      lib/              Types, IPC wrappers, theme system
+    preload/            Electron context bridge
+  native/
+    WindowHelper.swift  macOS Accessibility API bridge
+    build.sh
+  assets/
+    icon.icns           App icon
 ```
+
+---
+
+## Scripts
+
+| Command | What it does |
+|---------|-------------|
+| `npm run dev` | Start in dev mode (Vite + Electron) |
+| `npm run build` | Build native + renderer + main |
+| `npm run package` | Build and create `.dmg` |
+
+---
+
+## Roadmap
+
+- [ ] Custom drag-to-define grid layouts
+- [ ] Multi-monitor support
+- [ ] Auto-launch apps that aren't running
+- [ ] Import/export setups
+- [ ] Quick switcher overlay (Cmd+Space style)
+- [ ] Auto-activate based on time or display
 
 ---
 

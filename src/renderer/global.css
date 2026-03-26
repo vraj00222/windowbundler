@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles — light Apple aesthetic */
+/* Base styles — dark transparent Apple aesthetic */
 html, body, #root {
   height: 100%;
   margin: 0;
-  background: #FFFFFF;
-  color: #1D1D1F;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -16,13 +16,12 @@ html, body, #root {
 body {
   background: linear-gradient(
     180deg,
-    #FFFFFF 0%,
-    #F8F8FA 50%,
-    #F5F5F7 100%
+    rgba(18, 18, 20, 0.92) 0%,
+    rgba(12, 12, 14, 0.95) 100%
   );
 }
 
-/* Custom scrollbar - thin & light */
+/* Custom scrollbar - thin & subtle */
 ::-webkit-scrollbar {
   width: 5px;
 }
@@ -30,11 +29,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.10);
+  background: rgba(255, 255, 255, 0.10);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 /* Smooth transitions — Apple-like cubic-bezier */
@@ -51,50 +50,50 @@ body {
 /* Glass panel utility */
 @layer components {
   .glass-panel {
-    background: rgba(255, 255, 255, 0.82);
+    background: rgba(28, 28, 32, 0.65);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border: 0.5px solid rgba(0, 0, 0, 0.06);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 0.5px solid rgba(0, 0, 0, 0.06);
+    border: 0.5px solid rgba(255, 255, 255, 0.06);
     border-radius: 12px;
   }
 
   .btn-primary {
-    background: linear-gradient(180deg, #3898FF 0%, #007AFF 100%);
+    background: linear-gradient(180deg, #409CFF 0%, #0A84FF 100%);
     color: white;
     font-weight: 500;
     border-radius: 8px;
     padding: 6px 16px;
     font-size: 13px;
-    box-shadow: 0 1px 3px rgba(0, 122, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     border: none;
   }
   .btn-primary:hover {
-    background: linear-gradient(180deg, #5AADFF 0%, #0A84FF 100%);
-    box-shadow: 0 3px 12px rgba(0, 122, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    background: linear-gradient(180deg, #5AADFF 0%, #409CFF 100%);
+    box-shadow: 0 3px 16px rgba(10, 132, 255, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.20);
   }
   .btn-primary:active {
     transform: scale(0.98);
   }
 
   .btn-glass {
-    background: rgba(0, 0, 0, 0.03);
-    color: #1D1D1F;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.85);
     font-weight: 500;
     border-radius: 8px;
     padding: 6px 16px;
     font-size: 13px;
-    border: 0.5px solid rgba(0, 0, 0, 0.08);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
   }
   .btn-glass:hover {
-    background: rgba(0, 0, 0, 0.06);
-    border-color: rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.14);
   }
   .btn-glass:active {
     transform: scale(0.98);
@@ -103,12 +102,12 @@ body {
 
 /* Selection color */
 ::selection {
-  background: rgba(0, 122, 255, 0.2);
-  color: #1D1D1F;
+  background: rgba(10, 132, 255, 0.35);
+  color: white;
 }
 
 /* Native select dropdown styling */
 select option {
-  background: #FFFFFF;
-  color: #1D1D1F;
+  background: #1c1c20;
+  color: rgba(255, 255, 255, 0.92);
 }

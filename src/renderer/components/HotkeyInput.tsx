@@ -90,10 +90,10 @@ export default function HotkeyInput({ value, onChange }: HotkeyInputProps) {
           onBlur={() => setCapturing(false)}
           onKeyDown={handleKeyDown}
           className={`flex-1 px-3.5 py-2.5 rounded-xl text-[13px] outline-none cursor-pointer
-            bg-surface-1 border shadow-card ${
+            border shadow-card ${
             capturing
-              ? 'border-accent/40 ring-2 ring-accent/10 bg-accent/[0.03]'
-              : 'border-border'
+              ? 'border-accent/40 ring-2 ring-accent/10 bg-accent/[0.06]'
+              : 'border-border bg-white/[0.03]'
           }`}
         >
           {capturing ? (
@@ -107,7 +107,7 @@ export default function HotkeyInput({ value, onChange }: HotkeyInputProps) {
         {value && (
           <button
             onClick={() => onChange(undefined)}
-            className="text-[11px] text-text-tertiary hover:text-danger px-2.5 py-2 rounded-lg hover:bg-danger/5 font-medium"
+            className="text-[11px] text-text-tertiary hover:text-danger px-2.5 py-2 rounded-lg hover:bg-danger/10 font-medium"
           >
             Clear
           </button>

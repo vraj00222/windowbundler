@@ -1,4 +1,4 @@
-import { SwiftBridge, type ScreenInfo } from './swift-bridge';
+import { SwiftBridge, type ScreenInfo, type NativeWindowInfo } from './swift-bridge';
 import { loadSetups, type Setup } from './setup-store';
 
 interface LayoutSlot {
@@ -18,6 +18,59 @@ function calculateFrame(slot: LayoutSlot, screen: ScreenInfo) {
   };
 }
 
+/**
+ * Find the window index within an app's window list that best matches the assignment.
+ * Tries to match by window title first, falls back to sequential index.
+ */
+function findWindowIndex(
+  windows: NativeWindowInfo[],
+  assignment: { appName: string; windowTitle?: string; windowId?: number; pid?: number },
+  usedIndices: Map<number, Set<number>>
+): { pid: number; windowIndex: number } | null {
+  // Find all windows for this app
+  const appWindows = windows.filter(w =>
+    w.appName === assignment.appName
+  );
+
+  if (appWindows.length === 0) return null;
+
+  const pid = appWindows[0].pid;
+  const used = usedIndices.get(pid) || new Set();
+
+  // All windows for this pid to determine index
+  const pidWindows = windows.filter(w => w.pid === pid);
+
+  // Try matching by windowTitle first (most reliable for per-window targeting)
+  if (assignment.windowTitle) {
+    for (let i = 0; i < pidWindows.length; i++) {
+      if (!used.has(i) && pidWindows[i].windowTitle === assignment.windowTitle) {
+        used.add(i);
+        usedIndices.set(pid, used);
+        return { pid, windowIndex: i };
+      }
+    }
+    // Partial title match fallback
+    for (let i = 0; i < pidWindows.length; i++) {
+      if (!used.has(i) && pidWindows[i].windowTitle.includes(assignment.windowTitle)) {
+        used.add(i);
+        usedIndices.set(pid, used);
+        return { pid, windowIndex: i };
+      }
+    }
+  }
+
+  // Fall back to next unused window index for this pid
+  for (let i = 0; i < pidWindows.length; i++) {
+    if (!used.has(i)) {
+      used.add(i);
+      usedIndices.set(pid, used);
+      return { pid, windowIndex: i };
+    }
+  }
+
+  return null;
+}
+
 export async function activateSetup(setupId: string): Promise<{ success: boolean; error?: string }> {
   const setups = loadSetups();
   const setup = setups.find(s => s.id === setupId);
@@ -32,28 +85,22 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
   }
 
   const screen = await SwiftBridge.getScreenInfo();
+  const allWindows = await SwiftBridge.listWindows();
   const runningApps = await SwiftBridge.listApps();
   const assignedPids: Set<number> = new Set();
+  const usedIndices: Map<number, Set<number>> = new Map();
 
-  // Track how many windows per PID we've used (for same-app multi-slot)
-  const pidWindowIndex: Map<number, number> = new Map();
-
-  // Step 1: Move and resize each assigned app
+  // Step 1: Move and resize each assigned window
   for (const assignment of setup.assignments) {
     const slot = setup.layout.slots.find(s => s.id === assignment.slotId);
     if (!slot) continue;
 
-    const app = runningApps.find(
-      a => a.name === assignment.appName || a.bundleId === assignment.bundleId
-    );
-    if (!app) continue; // app not running, skip
-
-    const windowIdx = pidWindowIndex.get(app.pid) || 0;
-    pidWindowIndex.set(app.pid, windowIdx + 1);
+    const match = findWindowIndex(allWindows, assignment, usedIndices);
+    if (!match) continue; // window not found, skip
 
     const frame = calculateFrame(slot, screen);
-    await SwiftBridge.moveWindow(app.pid, windowIdx, frame.x, frame.y, frame.width, frame.height);
-    assignedPids.add(app.pid);
+    await SwiftBridge.moveWindow(match.pid, match.windowIndex, frame.x, frame.y, frame.width, frame.height);
+    assignedPids.add(match.pid);
   }
 
   // Step 2: Hide all other regular apps
@@ -65,7 +112,7 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
     }
   }
 
-  // Step 3: Focus the first assigned app (bring to front last so it's on top)
+  // Step 3: Focus the assigned apps (in reverse so the first one ends up on top)
   const focusPids: number[] = [];
   for (const assignment of setup.assignments) {
     const app = runningApps.find(
@@ -75,7 +122,6 @@ export async function activateSetup(setupId: string): Promise<{ success: boolean
       focusPids.push(app.pid);
     }
   }
-  // Focus in reverse order so the first assigned app ends up on top
   for (let i = focusPids.length - 1; i >= 0; i--) {
     await SwiftBridge.focusApp(focusPids[i]);
   }

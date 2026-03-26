@@ -32,8 +32,8 @@ export default function LayoutPicker({ selected, onChange }: LayoutPickerProps) 
               onClick={() => onChange(layout)}
               className={`p-2.5 rounded-xl border group relative overflow-hidden ${
                 isSelected
-                  ? 'border-accent/30 bg-accent/[0.05] shadow-glow'
-                  : 'border-border hover:border-border-active bg-surface-1 hover:bg-surface-2'
+                  ? 'border-accent/30 bg-accent/[0.08] shadow-glow'
+                  : 'border-border hover:border-border-active bg-white/[0.03] hover:bg-white/[0.06]'
               }`}
               style={{ transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)' }}
               title={PRESET_LABELS[preset]}
@@ -42,14 +42,14 @@ export default function LayoutPicker({ selected, onChange }: LayoutPickerProps) 
                 <div className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent animate-scale-in" />
               )}
 
-              <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-surface-2">
+              <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-white/[0.04]">
                 {layout.slots.map(slot => (
                   <div
                     key={slot.id}
                     className={`absolute rounded-[3px] ${
                       isSelected
-                        ? 'bg-accent/20 border border-accent/15'
-                        : 'bg-white border border-border group-hover:bg-white'
+                        ? 'bg-accent/25 border border-accent/20'
+                        : 'bg-white/[0.08] border border-white/[0.06] group-hover:bg-white/[0.12]'
                     }`}
                     style={{
                       left: `calc(${slot.x}% + 1.5px)`,

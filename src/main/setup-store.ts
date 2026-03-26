@@ -11,8 +11,9 @@ export interface Setup {
     preset: string;
     slots: Array<{ id: string; x: number; y: number; width: number; height: number }>;
   };
-  assignments: Array<{ slotId: string; appName: string; bundleId?: string }>;
+  assignments: Array<{ slotId: string; appName: string; bundleId?: string; windowTitle?: string; windowId?: number; pid?: number }>;
   hotkey?: string;
+  isDefault?: boolean;
   createdAt: number;
   updatedAt: number;
 }

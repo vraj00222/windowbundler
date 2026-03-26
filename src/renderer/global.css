@@ -2,23 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base styles — dark transparent Apple aesthetic */
+/* Base styles — dark Apple aesthetic */
 html, body, #root {
   height: 100%;
   margin: 0;
-  background: transparent;
+  background: #1a1a1e;
   color: rgba(255, 255, 255, 0.92);
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  background: linear-gradient(
-    180deg,
-    rgba(18, 18, 20, 0.92) 0%,
-    rgba(12, 12, 14, 0.95) 100%
-  );
 }
 
 /* Custom scrollbar - thin & subtle */
@@ -50,7 +42,7 @@ body {
 /* Glass panel utility */
 @layer components {
   .glass-panel {
-    background: rgba(28, 28, 32, 0.65);
+    background: rgba(28, 28, 32, 0.85);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
     border: 0.5px solid rgba(255, 255, 255, 0.08);

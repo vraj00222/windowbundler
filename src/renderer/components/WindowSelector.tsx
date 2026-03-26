@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ipc } from '../lib/ipc';
-import type { WindowInfo, AppAssignment, LayoutSlot } from '../lib/types';
+import type { AppInfo, AppAssignment, LayoutSlot } from '../lib/types';
 
 interface WindowSelectorProps {
   slots: LayoutSlot[];
@@ -8,93 +8,41 @@ interface WindowSelectorProps {
   onChange: (assignments: AppAssignment[]) => void;
 }
 
-interface WindowOption {
-  pid: number;
-  appName: string;
-  windowTitle: string;
-  windowId: number;
-  bundleId?: string;
-  label: string;
-}
-
 export default function WindowSelector({ slots, assignments, onChange }: WindowSelectorProps) {
-  const [windowOptions, setWindowOptions] = useState<WindowOption[]>([]);
+  const [apps, setApps] = useState<AppInfo[]>([]);
   const [loading, setLoading] = useState(false);
 
-  async function fetchWindows() {
+  async function fetchApps() {
     setLoading(true);
     try {
-      const [windows, apps] = await Promise.all([ipc.getWindows(), ipc.getApps()]);
-
-      // Build a map of bundleId by pid from apps
-      const bundleMap = new Map<number, string>();
-      for (const app of apps) {
-        if (app.bundleId) bundleMap.set(app.pid, app.bundleId);
-      }
-
-      // Group windows by app, showing title for disambiguation
-      const appWindowCounts = new Map<string, number>();
-      for (const w of windows) {
-        appWindowCounts.set(w.appName, (appWindowCounts.get(w.appName) || 0) + 1);
-      }
-
-      const options: WindowOption[] = windows.map(w => {
-        const count = appWindowCounts.get(w.appName) || 1;
-        const title = w.windowTitle || 'Untitled';
-        // If an app has multiple windows, show the window title to distinguish
-        const label = count > 1
-          ? `${w.appName} — ${title.length > 40 ? title.slice(0, 40) + '...' : title}`
-          : w.appName;
-
-        return {
-          pid: w.pid,
-          appName: w.appName,
-          windowTitle: w.windowTitle,
-          windowId: w.windowId,
-          bundleId: bundleMap.get(w.pid),
-          label,
-        };
-      });
-
-      setWindowOptions(options);
+      const data = await ipc.getApps();
+      // Sort alphabetically for easier scanning
+      data.sort((a, b) => a.name.localeCompare(b.name));
+      setApps(data);
     } catch (err) {
-      console.error('Failed to fetch windows:', err);
+      console.error('Failed to fetch apps:', err);
     }
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchWindows();
+    fetchApps();
   }, []);
 
-  function assignWindow(slotId: string, option: WindowOption | null) {
+  function assignApp(slotId: string, app: AppInfo | null) {
     const filtered = assignments.filter(a => a.slotId !== slotId);
-    if (option) {
+    if (app) {
       filtered.push({
         slotId,
-        appName: option.appName,
-        bundleId: option.bundleId,
-        windowTitle: option.windowTitle,
-        windowId: option.windowId,
-        pid: option.pid,
+        appName: app.name,
+        bundleId: app.bundleId || undefined,
       });
     }
     onChange(filtered);
   }
 
-  function getAssigned(slotId: string): AppAssignment | undefined {
+  function getAssignedApp(slotId: string): AppAssignment | undefined {
     return assignments.find(a => a.slotId === slotId);
-  }
-
-  function getAssignedLabel(slotId: string): string {
-    const a = getAssigned(slotId);
-    if (!a) return '';
-    // Build a unique key matching window options
-    if (a.windowId) {
-      const opt = windowOptions.find(o => o.windowId === a.windowId);
-      if (opt) return opt.label;
-    }
-    return a.appName;
   }
 
   return (
@@ -104,7 +52,7 @@ export default function WindowSelector({ slots, assignments, onChange }: WindowS
           Window Assignments
         </label>
         <button
-          onClick={fetchWindows}
+          onClick={fetchApps}
           className="text-[11px] text-accent/70 hover:text-accent flex items-center gap-1 font-medium"
           disabled={loading}
         >
@@ -123,8 +71,7 @@ export default function WindowSelector({ slots, assignments, onChange }: WindowS
 
       <div className="space-y-2">
         {slots.map((slot, i) => {
-          const assigned = getAssigned(slot.id);
-          const assignedLabel = getAssignedLabel(slot.id);
+          const assigned = getAssignedApp(slot.id);
           return (
             <div
               key={slot.id}
@@ -145,16 +92,14 @@ export default function WindowSelector({ slots, assignments, onChange }: WindowS
               </div>
 
               <select
-                value={assigned ? (assigned.windowId ? String(assigned.windowId) : assigned.appName) : ''}
+                value={assigned?.appName || ''}
                 onChange={(e) => {
-                  const val = e.target.value;
-                  if (!val) {
-                    assignWindow(slot.id, null);
+                  const appName = e.target.value;
+                  if (!appName) {
+                    assignApp(slot.id, null);
                   } else {
-                    // Find by windowId first (numeric), then by label
-                    const opt = windowOptions.find(o => String(o.windowId) === val)
-                      || windowOptions.find(o => o.label === val);
-                    if (opt) assignWindow(slot.id, opt);
+                    const app = apps.find(a => a.name === appName);
+                    if (app) assignApp(slot.id, app);
                   }
                 }}
                 className="flex-1 border border-border rounded-lg px-2.5 py-2 text-[13px]
@@ -169,9 +114,9 @@ export default function WindowSelector({ slots, assignments, onChange }: WindowS
                 }}
               >
                 <option value="">{'\u2014'} None {'\u2014'}</option>
-                {windowOptions.map(opt => (
-                  <option key={`${opt.windowId}`} value={String(opt.windowId)}>
-                    {opt.label}
+                {apps.map(app => (
+                  <option key={`${app.pid}-${app.name}`} value={app.name}>
+                    {app.name}
                   </option>
                 ))}
               </select>

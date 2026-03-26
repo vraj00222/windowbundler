@@ -27,9 +27,6 @@ export interface AppAssignment {
   slotId: string;          // which layout slot
   appName: string;         // e.g., "Google Chrome"
   bundleId?: string;       // e.g., "com.google.Chrome"
-  windowTitle?: string;    // specific window title for per-window selection
-  windowId?: number;       // CGWindowID for targeting a specific window
-  pid?: number;            // process ID at time of assignment (used for matching)
 }
 
 export interface Setup {

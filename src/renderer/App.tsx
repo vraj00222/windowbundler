@@ -72,7 +72,7 @@ export default function App() {
   const activeSetup = setups.find(s => s.id === activeSetupId) || null;
 
   return (
-    <div className="flex h-screen select-none overflow-hidden" style={{ background: 'transparent' }}>
+    <div className="flex h-screen select-none overflow-hidden bg-[#1a1a1e]">
       {/* Accessibility Warning */}
       {!hasAccess && (
         <div className="absolute top-0 left-0 right-0 z-50 px-4 py-2.5 text-center text-[13px] animate-slide-up"
@@ -117,7 +117,7 @@ export default function App() {
       />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto" style={{ background: 'rgba(12, 12, 14, 0.60)' }} data-no-drag>
+      <main className="flex-1 overflow-y-auto bg-[#141416]" data-no-drag>
         {selectedSetup ? (
           <div className="animate-fade-in">
             <SetupEditor
